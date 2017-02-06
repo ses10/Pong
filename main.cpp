@@ -21,6 +21,7 @@ void closeGame();
 // Utility functions
 bool isRunning();
 bool loadFiles();
+void freeFiles();
 
 // Resource variables
 SDL_Surface *backbuffer = NULL;
@@ -41,6 +42,8 @@ int main(int argc, char *argv[])
     {
 
     }
+
+    closeGame();
 
     return 0;
 }
@@ -97,6 +100,27 @@ bool loadFiles()
 }
 
 /**
+    Closes the program and frees all assets from memory
+*/
+void closeGame()
+{
+    freeFiles();
+    SDL_Quit();
+}
+
+/**
+    Frees all loaded assets from memory
+*/
+void freeFiles()
+{
+    //free images
+    SDL_FreeSurface(backgroundImage);
+    SDL_FreeSurface(player1PaddleImage);
+    SDL_FreeSurface(player2PaddleImage);
+    SDL_FreeSurface(ballImage);
+}
+
+/**
     Checks to see if user exited game
 
     @return false if user closes program, true otherwise
@@ -123,3 +147,4 @@ bool isRunning()
 
     return running;
 }
+
