@@ -37,7 +37,25 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+/**
+    Sets up the initial state of the game
+    by starting SDL and loading assets
 
+    @return true if successful, false otherwise
+*/
+bool initGame()
+{
+    if(!SDL_Init(SDL_INIT_EVERYTHING))
+        return false;
+
+    if(!loadFiles())
+        return false;
+
+    //Set the title
+    SDL_WM_SetCaption("Paddle Game!",NULL);
+
+    return true;
+}
 
 /**
     Checks to see if user exited game
