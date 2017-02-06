@@ -23,6 +23,7 @@ bool isRunning();
 bool initSDL();
 bool loadFiles();
 void freeFiles();
+void drawImage(SDL_Surface *image, SDL_Surface *dst, int x, int y);
 
 // Resource variables
 SDL_Surface *backbuffer = NULL;
@@ -39,9 +40,12 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    if(isRunning())
+    while(isRunning())
     {
+        //clear screen
+        SDL_FillRect(backbuffer, NULL, 0);
 
+        drawGame();
     }
 
     closeGame();
@@ -64,7 +68,7 @@ bool initGame()
         return false;
 
     // Set the title
-    SDL_WM_SetCaption("Paddle Game!",NULL);
+    SDL_WM_SetCaption("Pong",NULL);
 
     return true;
 }
@@ -118,6 +122,31 @@ bool loadFiles()
     // Load font
 
     return true;
+}
+
+/**
+    Draws all the sprites to the backbuffer
+*/
+void drawGame()
+{
+    drawImage(backgroundImage, backbuffer, 0, 0);
+}
+
+/**
+    Draws an image to the destination SDL_Surface
+
+    @param image is the source surface
+    @param dst is the destination surface
+    @param x is the x coordinate of where the image will be drawn to
+    @param y is the y coordinate of where the image will be drawn to
+*/
+void drawImage(SDL_Surface *image, SDL_Surface *dst, int x, int y)
+{
+    SDL_Rect dstRect;
+    dstRect.x = x;
+    dstRect.y = y;
+
+    SDL_BlitSurface(image, NULL, dst, &dstRect);
 }
 
 /**
