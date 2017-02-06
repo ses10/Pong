@@ -24,6 +24,7 @@ bool initSDL();
 bool loadFiles();
 void freeFiles();
 void drawImage(SDL_Surface *image, SDL_Surface *dst, int x, int y);
+SDL_Surface* loadImage(char* fileName);
 
 // Resource variables
 SDL_Surface *backbuffer = NULL;
@@ -43,9 +44,11 @@ int main(int argc, char *argv[])
     while(isRunning())
     {
         //clear screen
-        SDL_FillRect(backbuffer, NULL, 0);
+        SDL_FillRect(backbuffer, NULL, 255);
 
         drawGame();
+
+        SDL_Flip(backbuffer);
     }
 
     closeGame();
@@ -101,10 +104,10 @@ bool initSDL()
 bool loadFiles()
 {
     // Load images
-    backgroundImage = SDL_LoadBMP("graphics/background.bmp");
-    player1PaddleImage = SDL_LoadBMP("graphics/player.bmp");
-    player2PaddleImage = SDL_LoadBMP("graphics/player.bmp");
-    ballImage = SDL_LoadBMP("graphics/ball.bmp");
+    backgroundImage = loadImage("graphics/background.bmp");
+    player1PaddleImage = loadImage("graphics/player.bmp");
+    player2PaddleImage = loadImage("graphics/player.bmp");
+    ballImage = loadImage("graphics/ball.bmp");
 
     if(backgroundImage == NULL)
         return false;
@@ -122,6 +125,29 @@ bool loadFiles()
     // Load font
 
     return true;
+}
+/**
+    Loads a given BMP image into memory
+
+    @param fileName is the path to the BMP image
+
+    @return pointer to SDL_Surface
+*/
+SDL_Surface* loadImage(char* fileName)
+{
+    SDL_Surface* loadedImage = NULL;
+    SDL_Surface* processedImage = NULL;
+
+    loadedImage = SDL_LoadBMP(fileName);
+
+    if(loadedImage != NULL)
+    {
+        //convert to format of video framebuffer
+        processedImage = SDL_DisplayFormat(loadedImage);
+        SDL_FreeSurface(loadedImage);
+    }
+
+    return processedImage;
 }
 
 /**
