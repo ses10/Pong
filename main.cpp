@@ -20,6 +20,14 @@ void closeGame();
 
 // Utility functions
 bool isRunning();
+bool loadFiles();
+
+// Resource variables
+SDL_Surface *backbuffer = NULL;
+SDL_Surface *backgroundImage = NULL;
+SDL_Surface *ballImage = NULL;
+SDL_Surface *player1PaddleImage = NULL;
+SDL_Surface *player2PaddleImage = NULL;
 
 int main(int argc, char *argv[])
 {
@@ -51,8 +59,39 @@ bool initGame()
     if(!loadFiles())
         return false;
 
-    //Set the title
+    // Set the title
     SDL_WM_SetCaption("Paddle Game!",NULL);
+
+    return true;
+}
+
+/**
+    Loads the assets for the game
+
+    @return true if successful, false otherwise
+*/
+bool loadFiles()
+{
+    // Load images
+    backgroundImage = SDL_LoadBMP("graphics/background.bmp");
+    player1PaddleImage = SDL_LoadBMP("graphics/player.bmp");
+    player2PaddleImage = SDL_LoadBMP("graphics/player.bmp");
+    ballImage = SDL_LoadBMP("graphics/ball.bmp");
+
+    if(backgroundImage == NULL)
+        return false;
+    if(ballImage == NULL)
+        return false;
+    if(player1PaddleImage == NULL)
+        return false;
+    if(player2PaddleImage == NULL)
+        return false;
+
+    // Load sounds
+
+    // Load music
+
+    // Load font
 
     return true;
 }
