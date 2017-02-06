@@ -15,7 +15,7 @@ const int FRAME_DELAY = 1000;
 // Core Game functions
 bool initGame();
 void runGame();
-void drawGame():
+void drawGame();
 void closeGame();
 
 // Utility functions
@@ -29,10 +29,40 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    if(isRunning)
+    if(isRunning())
     {
 
     }
 
     return 0;
+}
+
+
+
+/**
+    Checks to see if user exited game
+
+    @return false if user closes program, true otherwise
+*/
+bool isRunning()
+{
+    SDL_Event event;
+
+    bool running = true;
+
+    while(SDL_PollEvent(&event))
+    {
+        if(event.type == SDL_QUIT)
+            running = false;
+
+        if( event.type == SDL_KEYDOWN )
+        {
+            if(event.key.keysym.sym == SDLK_ESCAPE)
+            {
+                    running = false;
+            }
+        }
+    }
+
+    return running;
 }
