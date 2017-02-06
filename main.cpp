@@ -20,6 +20,7 @@ void closeGame();
 
 // Utility functions
 bool isRunning();
+bool initSDL();
 bool loadFiles();
 void freeFiles();
 
@@ -56,7 +57,7 @@ int main(int argc, char *argv[])
 */
 bool initGame()
 {
-    if(!SDL_Init(SDL_INIT_EVERYTHING))
+    if(!initSDL())
         return false;
 
     if(!loadFiles())
@@ -64,6 +65,26 @@ bool initGame()
 
     // Set the title
     SDL_WM_SetCaption("Paddle Game!",NULL);
+
+    return true;
+}
+
+/**
+    Initializes SDL and libraries
+
+    @return true if successful, false otherwise
+*/
+bool initSDL()
+{
+    if(SDL_Init(SDL_INIT_EVERYTHING) == -1)
+        return false;
+
+    //Generate screen
+    backbuffer = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_SWSURFACE );
+
+    //Error check Backbuffer
+    if(backbuffer == NULL)
+        return false;
 
     return true;
 }
