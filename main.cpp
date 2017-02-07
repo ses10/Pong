@@ -26,7 +26,7 @@ bool loadFiles();
 void freeFiles();
 void drawImage(SDL_Surface *image, SDL_Surface *dst, int x, int y);
 SDL_Surface* loadImage(char* fileName);
-void updatePlayer(SDL_Rect playerRect, bool isPlayer1);
+void updatePlayer(SDL_Rect* playerRect, bool isPlayer1);
 
 // Resource variables
 SDL_Surface *backbuffer = NULL;
@@ -163,18 +163,18 @@ SDL_Surface* loadImage(char* fileName)
 */
 void runGame()
 {
-    updatePlayer(player1Rect, true);
-    updatePlayer(player2Rect, false);
+    updatePlayer(&player1Rect, true);
+    updatePlayer(&player2Rect, false);
     //update ball
 }
 
 /**
     Updates the given player's position every frame
 
-    @param playerRect is the SDL_Rect representing the player paddle
+    @param playerRect is pointer to the SDL_Rect representing the player paddle
     @param isPlayer1 is whether the given SDL_Rect represents player1
 */
-void updatePlayer(SDL_Rect playerRect, bool isPlayer1)
+void updatePlayer(SDL_Rect* playerRect, bool isPlayer1)
 {
     Uint8 *keys = SDL_GetKeyState(NULL);
 
@@ -186,17 +186,17 @@ void updatePlayer(SDL_Rect playerRect, bool isPlayer1)
 
     //Move the paddle when the up/down key is pressed
     if(up)
-        playerRect.y -= PLAYER_SPEED;
+        playerRect->y -= PLAYER_SPEED;
 
     if(down)
-        playerRect.y += PLAYER_SPEED;
+        playerRect->y += PLAYER_SPEED;
 
     //Make sure the paddle doesn't leave the screen
-    if(playerRect.y < 0)
-        playerRect.y = 0;
+    if(playerRect->y < 0)
+        playerRect->y = 0;
 
-    if(playerRect.y > SCREEN_HEIGHT-playerRect.h)
-        playerRect.y = SCREEN_HEIGHT-playerRect.h;
+    if(playerRect->y > SCREEN_HEIGHT-playerRect->h)
+        playerRect->y = SCREEN_HEIGHT-playerRect->h;
 }
 
 /**
@@ -205,6 +205,8 @@ void updatePlayer(SDL_Rect playerRect, bool isPlayer1)
 void drawGame()
 {
     drawImage(backgroundImage, backbuffer, 0, 0);
+    drawImage(player1PaddleImage, backbuffer, player1Rect.x,player1Rect.y);
+    drawImage(player2PaddleImage, backbuffer, player2Rect.x,player2Rect.y);
 }
 
 /**
