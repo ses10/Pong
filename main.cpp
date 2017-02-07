@@ -7,8 +7,11 @@ const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 const int PADDLE_WIDTH = 27;
 const int PADDLE_HEIGHT = 155;
+const int PLAYER1_PADDLE_X = PADDLE_WIDTH;
+const int PLAYER2_PADDLE_X = SCREEN_WIDTH - PADDLE_WIDTH*2;
 const int BALL_WIDTH = 25;
 const int BALL_HEIGHT = 25;
+const int BALL_MAX_SPEED = 20;
 const int FPS = 30;
 const int FRAME_DELAY = 1000;
 const int PLAYER_SPEED = 10;
@@ -27,6 +30,7 @@ void freeFiles();
 void drawImage(SDL_Surface *image, SDL_Surface *dst, int x, int y);
 SDL_Surface* loadImage(char* fileName);
 void updatePlayer(SDL_Rect* playerRect, bool isPlayer1);
+void resetGame();
 
 // Resource variables
 SDL_Surface *backbuffer = NULL;
@@ -38,7 +42,9 @@ SDL_Surface *player2PaddleImage = NULL;
 //Game Variables
 SDL_Rect player1Rect;
 SDL_Rect player2Rect;
-
+SDL_Rect ballRect;
+int ballXVel;
+int ballYVel;
 
 int main(int argc, char *argv[])
 {
@@ -80,6 +86,8 @@ bool initGame()
 
     // Set the title
     SDL_WM_SetCaption("Pong",NULL);
+
+    resetGame();
 
     return true;
 }
@@ -207,6 +215,7 @@ void drawGame()
     drawImage(backgroundImage, backbuffer, 0, 0);
     drawImage(player1PaddleImage, backbuffer, player1Rect.x,player1Rect.y);
     drawImage(player2PaddleImage, backbuffer, player2Rect.x,player2Rect.y);
+    drawImage(ballImage, backbuffer, ballRect.x, ballRect.y);
 }
 
 /**
@@ -275,3 +284,33 @@ bool isRunning()
     return running;
 }
 
+/**
+    Resets the player and ball positions
+*/
+void resetGame()
+{
+    player1Rect.x = PLAYER1_PADDLE_X;
+    player1Rect.y = SCREEN_HEIGHT/2 - PADDLE_HEIGHT/2;
+    player1Rect.w = PADDLE_WIDTH;
+    player1Rect.h = PADDLE_HEIGHT;
+
+    player2Rect.x = PLAYER2_PADDLE_X;
+    player2Rect.y = SCREEN_HEIGHT/2 - PADDLE_HEIGHT/2;
+    player2Rect.w = PADDLE_WIDTH;
+    player2Rect.h = PADDLE_HEIGHT;
+
+    ballRect.x = SCREEN_WIDTH/2 - BALL_WIDTH/2;
+    ballRect.y = SCREEN_HEIGHT/2 - BALL_HEIGHT/2;
+    ballRect.w = BALL_HEIGHT;
+    ballRect.h = BALL_WIDTH;
+
+    //Make the ball X velocity a random value from 1 to BALL_MAX_SPEED
+    ballXVel = rand()%BALL_MAX_SPEED + 1;
+
+    //Make the ball Y velocity a random value from -BALL_MAX_SPEED to BALL_MAX_SPEED
+    ballYVel = (rand()%BALL_MAX_SPEED*2 + 1) - BALL_MAX_SPEED;
+
+    //Give it a 50% probability of going toward's the player
+    if(rand()%2 == 0)
+        ballXVel *= -1;
+}
