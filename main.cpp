@@ -11,6 +11,7 @@ const int BALL_WIDTH = 25;
 const int BALL_HEIGHT = 25;
 const int FPS = 30;
 const int FRAME_DELAY = 1000;
+const int PLAYER_SPEED = 10;
 
 // Core Game functions
 bool initGame();
@@ -25,6 +26,7 @@ bool loadFiles();
 void freeFiles();
 void drawImage(SDL_Surface *image, SDL_Surface *dst, int x, int y);
 SDL_Surface* loadImage(char* fileName);
+void updatePlayer(SDL_Rect playerRect, bool isPlayer1);
 
 // Resource variables
 SDL_Surface *backbuffer = NULL;
@@ -32,6 +34,11 @@ SDL_Surface *backgroundImage = NULL;
 SDL_Surface *ballImage = NULL;
 SDL_Surface *player1PaddleImage = NULL;
 SDL_Surface *player2PaddleImage = NULL;
+
+//Game Variables
+SDL_Rect player1Rect;
+SDL_Rect player2Rect;
+
 
 int main(int argc, char *argv[])
 {
@@ -44,8 +51,9 @@ int main(int argc, char *argv[])
     while(isRunning())
     {
         //clear screen
-        SDL_FillRect(backbuffer, NULL, 255);
+        SDL_FillRect(backbuffer, NULL, 0);
 
+        runGame();
         drawGame();
 
         SDL_Flip(backbuffer);
@@ -148,6 +156,47 @@ SDL_Surface* loadImage(char* fileName)
     }
 
     return processedImage;
+}
+
+/**
+    Updates the players and ball every frame
+*/
+void runGame()
+{
+    updatePlayer(player1Rect, true);
+    updatePlayer(player2Rect, false);
+    //update ball
+}
+
+/**
+    Updates the given player's position every frame
+
+    @param playerRect is the SDL_Rect representing the player paddle
+    @param isPlayer1 is whether the given SDL_Rect represents player1
+*/
+void updatePlayer(SDL_Rect playerRect, bool isPlayer1)
+{
+    Uint8 *keys = SDL_GetKeyState(NULL);
+
+    Uint8 up;
+    Uint8 down;
+
+    isPlayer1 == true ? up = keys[SDLK_w] : up = keys[SDLK_UP];
+    isPlayer1 == true ? down = keys[SDLK_s] : down = keys[SDLK_DOWN];
+
+    //Move the paddle when the up/down key is pressed
+    if(up)
+        playerRect.y -= PLAYER_SPEED;
+
+    if(down)
+        playerRect.y += PLAYER_SPEED;
+
+    //Make sure the paddle doesn't leave the screen
+    if(playerRect.y < 0)
+        playerRect.y = 0;
+
+    if(playerRect.y > SCREEN_HEIGHT-playerRect.h)
+        playerRect.y = SCREEN_HEIGHT-playerRect.h;
 }
 
 /**
