@@ -34,6 +34,7 @@ void updatePlayer(SDL_Rect* playerRect, bool isPlayer1);
 void updateBall();
 void resetGame();
 bool rectOverlap(SDL_Rect rect1, SDL_Rect rect2);
+void drawText(SDL_Surface* surface, char* string, int x, int y, TTF_Font* font, Uint8 r, Uint8 g, Uint8 b);
 
 // Resource variables
 SDL_Surface *backbuffer = NULL;
@@ -41,6 +42,7 @@ SDL_Surface *backgroundImage = NULL;
 SDL_Surface *ballImage = NULL;
 SDL_Surface *player1PaddleImage = NULL;
 SDL_Surface *player2PaddleImage = NULL;
+TTF_Font *gameFont = NULL;
 
 //Game Variables
 int player1Score;
@@ -114,6 +116,12 @@ bool initSDL()
     if(SDL_Init(SDL_INIT_EVERYTHING) == -1)
         return false;
 
+    //Init font system
+    if(TTF_Init() == -1)
+    {
+        return false;
+    }
+
     //Generate screen
     backbuffer = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32, SDL_SWSURFACE );
 
@@ -151,6 +159,7 @@ bool loadFiles()
     // Load music
 
     // Load font
+    gameFont = TTF_OpenFont("graphics/alfphabet.ttf", 30);
 
     return true;
 }
@@ -306,6 +315,50 @@ void drawGame()
     drawImage(player1PaddleImage, backbuffer, player1Rect.x,player1Rect.y);
     drawImage(player2PaddleImage, backbuffer, player2Rect.x,player2Rect.y);
     drawImage(ballImage, backbuffer, ballRect.x, ballRect.y);
+
+    char player1HUD[64];
+    char player2HUD[64];
+
+    sprintf(player1HUD, "%d", player1Score);
+    sprintf(player2HUD, "%d", player2Score);
+
+    int player1ScoreX = SCREEN_WIDTH / 2 - 100;
+    int player2ScoreX = SCREEN_WIDTH / 2 + 100;
+
+    drawText(backbuffer, player1HUD, player1ScoreX,50, gameFont, 255,255,255);
+    drawText(backbuffer, player2HUD, player2ScoreX,50, gameFont, 255,255,255);
+}
+
+/**
+    Draws a given string on a given surface
+
+    @param surface is where the text will be written to
+    @param string is the text to be written
+    @param x is the x coordinate the text will be placed at
+    @param y is the y coordinate the text will be placed at
+    @param font is the font to use for string
+    @param r is the amount of red to use
+    @param g is the amount of green to use
+    @param r is the amount of blue to use
+*/
+void drawText(SDL_Surface* surface, char* string, int x, int y, TTF_Font* font, Uint8 r, Uint8 g, Uint8 b)
+{
+    SDL_Surface* renderedText = NULL;
+
+    //convert the given r,g,b to a pixel color value
+    SDL_Color color;
+    color.r = r;
+    color.g = g;
+    color.b = b;
+
+    renderedText = TTF_RenderText_Solid(font, string, color);
+
+    SDL_Rect pos;
+    pos.x = x;
+    pos.y = y;
+
+    SDL_BlitSurface(renderedText, NULL, backbuffer, &pos);
+    SDL_FreeSurface(renderedText);
 }
 
 /**
@@ -331,6 +384,7 @@ void drawImage(SDL_Surface *image, SDL_Surface *dst, int x, int y)
 void closeGame()
 {
     freeFiles();
+    TTF_Quit();
     SDL_Quit();
 }
 
@@ -344,6 +398,9 @@ void freeFiles()
     SDL_FreeSurface(player1PaddleImage);
     SDL_FreeSurface(player2PaddleImage);
     SDL_FreeSurface(ballImage);
+
+    //free font
+    TTF_CloseFont(gameFont);
 }
 
 /**
