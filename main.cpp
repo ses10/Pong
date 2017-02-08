@@ -11,9 +11,9 @@ const int PLAYER1_PADDLE_X = PADDLE_WIDTH;
 const int PLAYER2_PADDLE_X = SCREEN_WIDTH - PADDLE_WIDTH*2;
 const int BALL_WIDTH = 25;
 const int BALL_HEIGHT = 25;
-const int BALL_MAX_SPEED = 2;
+const int BALL_MAX_SPEED = 20;
 const int FPS = 30;
-const int FRAME_DELAY = 1000;
+const int FRAME_DELAY = 1000/FPS;
 const int PLAYER_SPEED = 10;
 
 // Core Game functions
