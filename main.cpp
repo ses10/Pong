@@ -60,11 +60,18 @@ int main(int argc, char *argv[])
 
     while(isRunning())
     {
+        long int oldTime = SDL_GetTicks();
+
         //clear screen
         SDL_FillRect(backbuffer, NULL, 0);
 
         runGame();
         drawGame();
+
+        //regulate framerate
+        int frameTime = SDL_GetTicks() - oldTime;
+        if(frameTime < FRAME_DELAY)
+            SDL_Delay(FRAME_DELAY - frameTime);
 
         SDL_Flip(backbuffer);
     }
