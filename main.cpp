@@ -5,6 +5,7 @@
 // Constants
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
+const int SCREEN_BORDER_Y = 20;
 const int PADDLE_WIDTH = 27;
 const int PADDLE_HEIGHT = 155;
 const int PLAYER1_PADDLE_X = PADDLE_WIDTH;
@@ -211,11 +212,11 @@ void updatePlayer(SDL_Rect* playerRect, bool isPlayer1)
         playerRect->y += PLAYER_SPEED;
 
     //Make sure the paddle doesn't leave the screen
-    if(playerRect->y < 0)
-        playerRect->y = 0;
+    if(playerRect->y < 0 + SCREEN_BORDER_Y)
+        playerRect->y = SCREEN_BORDER_Y;
 
-    if(playerRect->y > SCREEN_HEIGHT-playerRect->h)
-        playerRect->y = SCREEN_HEIGHT-playerRect->h;
+    if(playerRect->y > SCREEN_HEIGHT-playerRect->h - SCREEN_BORDER_Y)
+        playerRect->y = SCREEN_HEIGHT-playerRect->h - SCREEN_BORDER_Y;
 }
 
 /**
@@ -240,15 +241,15 @@ void updateBall()
 
     //Make sure the ball doesn't leave the screen and make it
     //bounce randomly
-    if(ballRect.y < 0)
+    if(ballRect.y < 0 + SCREEN_BORDER_Y)
     {
-        ballRect.y = 0;
+        ballRect.y = SCREEN_BORDER_Y;
         ballYVel = rand()%BALL_MAX_SPEED + 1;
     }
 
-    if(ballRect.y > SCREEN_HEIGHT - ballRect.h)
+    if(ballRect.y > SCREEN_HEIGHT - ballRect.h - SCREEN_BORDER_Y)
     {
-        ballRect.y = SCREEN_HEIGHT - ballRect.h;
+        ballRect.y = SCREEN_HEIGHT - ballRect.h - SCREEN_BORDER_Y;
         ballYVel = (rand()%BALL_MAX_SPEED + 1)* -1 ;
     }
 
