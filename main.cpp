@@ -11,7 +11,7 @@ const int PLAYER1_PADDLE_X = PADDLE_WIDTH;
 const int PLAYER2_PADDLE_X = SCREEN_WIDTH - PADDLE_WIDTH*2;
 const int BALL_WIDTH = 25;
 const int BALL_HEIGHT = 25;
-const int BALL_MAX_SPEED = 20;
+const int BALL_MAX_SPEED = 2;
 const int FPS = 30;
 const int FRAME_DELAY = 1000;
 const int PLAYER_SPEED = 10;
@@ -30,7 +30,9 @@ void freeFiles();
 void drawImage(SDL_Surface *image, SDL_Surface *dst, int x, int y);
 SDL_Surface* loadImage(char* fileName);
 void updatePlayer(SDL_Rect* playerRect, bool isPlayer1);
+void updateBall();
 void resetGame();
+bool rectOverlap(SDL_Rect rect1, SDL_Rect rect2);
 
 // Resource variables
 SDL_Surface *backbuffer = NULL;
@@ -40,6 +42,8 @@ SDL_Surface *player1PaddleImage = NULL;
 SDL_Surface *player2PaddleImage = NULL;
 
 //Game Variables
+int player1Score;
+int player2Score;
 SDL_Rect player1Rect;
 SDL_Rect player2Rect;
 SDL_Rect ballRect;
@@ -173,7 +177,7 @@ void runGame()
 {
     updatePlayer(&player1Rect, true);
     updatePlayer(&player2Rect, false);
-    //update ball
+    updateBall();
 }
 
 /**
@@ -205,6 +209,84 @@ void updatePlayer(SDL_Rect* playerRect, bool isPlayer1)
 
     if(playerRect->y > SCREEN_HEIGHT-playerRect->h)
         playerRect->y = SCREEN_HEIGHT-playerRect->h;
+}
+
+/**
+    Updates the ball's position every frame
+*/
+void updateBall()
+{
+    ballRect.x += ballXVel;
+    ballRect.y += ballYVel;
+
+    //If the ball hits player1, make it bounce
+    if(rectOverlap(ballRect, player1Rect))
+    {
+        ballXVel = rand()%BALL_MAX_SPEED + 1;
+    }
+
+    //If the ball hits player2, make it bounce
+    if(rectOverlap(ballRect, player2Rect))
+    {
+        ballXVel = (rand()%BALL_MAX_SPEED +1) * -1;
+    }
+
+    //Make sure the ball doesn't leave the screen and make it
+    //bounce randomly
+    if(ballRect.y < 0)
+    {
+        ballRect.y = 0;
+        ballYVel = rand()%BALL_MAX_SPEED + 1;
+    }
+
+    if(ballRect.y > SCREEN_HEIGHT - ballRect.h)
+    {
+        ballRect.y = SCREEN_HEIGHT - ballRect.h;
+        ballYVel = (rand()%BALL_MAX_SPEED + 1)* -1 ;
+    }
+
+    //If player1 scores
+    if(ballRect.x > SCREEN_WIDTH)
+    {
+        player1Score++;
+        resetGame();
+    }
+
+    //If player2 scores
+    if(ballRect.x < 0-ballRect.w)
+    {
+        player2Score++;
+        resetGame();
+    }
+}
+
+/**
+    Checks whether the two given SDL_Rect collide
+
+    @param rect1 is the rectangle colliding into rect2
+    @param rect2 is the rectangle that is the target of the collision
+
+    @return true if given SDL_Rects overlap, false otherwise
+*/
+bool rectOverlap(SDL_Rect rect1, SDL_Rect rect2)
+{
+    //check collision to the right
+    if(rect1.x >= rect2.x + rect2.w)
+        return false;
+
+    //check collision on bottom
+    if(rect1.y >= rect2.y + rect2.h)
+        return false;
+
+    //check collision to the left
+    if(rect2.x >= rect1.x+rect1.w)
+        return false;
+
+    //check collision to the right
+    if(rect2.y >= rect1.y+rect1.h)
+        return false;
+
+    return true;
 }
 
 /**
